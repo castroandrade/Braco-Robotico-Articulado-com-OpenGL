@@ -166,24 +166,117 @@ void desenharBracoRobotico() {
     glPopMatrix();
 }
 
-// Função para exibir instruções na tela
+// Função para exibir instruções na tela - VERSÃO MELHORADA
 void exibirInstrucoes() {
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glRasterPos2f(-4.5f, 4.0f);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT));
     
-    char instrucoes[] = "Controles: 1-Base 2-Braco 3-Antebraco 4-Garra | WASD-Mover | QE-Rotacionar X | RF-Rotacionar Y | TG-Rotacionar Z | YU-Abrir/Fechar | IJKL-Mudar visao";
-    for (int i = 0; instrucoes[i] != '\0'; i++) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, instrucoes[i]);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    
+    float y = glutGet(GLUT_WINDOW_HEIGHT) - 20;
+    float alturaDeLinha = 18;
+    
+    glColor3f(1.0f, 1.0f, 0.7f);
+    
+    // Título
+    glRasterPos2f(20, y);
+    char titulo[] = "CONTROLES DO BRACO ROBOTICO:";
+    for (int i = 0; titulo[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, titulo[i]);
     }
+    y -= alturaDeLinha + 5;
+    
+    glColor3f(0.9f, 0.9f, 1.0f);
+    
+    // Seleção de segmentos
+    glRasterPos2f(20, y);
+    char selecao[] = "Selecionar segmento:  [1] Base  [2] Braco  [3] Antebraco  [4] Garra";
+    for (int i = 0; selecao[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, selecao[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Movimento
+    glRasterPos2f(20, y);
+    char movimento[] = "Mover base:  [W] Frente  [S] Tras  [A] Esquerda  [D] Direita";
+    for (int i = 0; movimento[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, movimento[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Rotação X
+    glRasterPos2f(20, y);
+    char rotX[] = "Rotacao X:  [Q] Anti-horario  [E] Horario";
+    for (int i = 0; rotX[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, rotX[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Rotação Y
+    glRasterPos2f(20, y);
+    char rotY[] = "Rotacao Y:  [R] Anti-horario  [F] Horario";
+    for (int i = 0; rotY[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, rotY[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Rotação Z
+    glRasterPos2f(20, y);
+    char rotZ[] = "Rotacao Z:  [T] Anti-horario  [G] Horario";
+    for (int i = 0; rotZ[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, rotZ[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Garra
+    glRasterPos2f(20, y);
+    char garraCtrl[] = "Controle da garra:  [Y] Abrir  [U] Fechar";
+    for (int i = 0; garraCtrl[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, garraCtrl[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Visão
+    glRasterPos2f(20, y);
+    char visao[] = "Mudar camera:  [I][K] Girar lentamente  [J][L] Girar rapidamente";
+    for (int i = 0; visao[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, visao[i]);
+    }
+    y -= alturaDeLinha;
+    
+    // Sair
+    glRasterPos2f(20, y);
+    char sair[] = "Sair:  [ESC]";
+    for (int i = 0; sair[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, sair[i]);
+    }
+    y -= alturaDeLinha + 5;
+    
+    // Informação sobre o segmento atual
+    glColor3f(0.0f, 1.0f, 0.5f);
+    glRasterPos2f(20, y);
     
     char segmentoAtualStr[50];
-    const char* segmentos[] = {"Base", "Braco", "Antebraco", "Garrafa"};
-    sprintf(segmentoAtualStr, "Segmento atual: %s", segmentos[segmentoAtual]);
+    const char* segmentos[] = {"Base", "Braco", "Antebraco", "Garra"};
+    sprintf(segmentoAtualStr, "SEGMENTO ATUAL: %s", segmentos[segmentoAtual]);
     
-    glRasterPos2f(-4.5f, 3.8f);
     for (int i = 0; segmentoAtualStr[i] != '\0'; i++) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, segmentoAtualStr[i]);
     }
+    
+    // Retorna ao estado anterior da matriz
+    glEnable(GL_DEPTH_TEST);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 // Função de display principal
@@ -283,7 +376,6 @@ void keyboard(unsigned char key, int x, int y) {
     
     glutPostRedisplay();
 }
-
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
