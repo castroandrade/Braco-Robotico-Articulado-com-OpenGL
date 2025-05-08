@@ -159,7 +159,7 @@ void desenharBracoRobotico() {
     desenharCubo(antebraco.comprimento, antebraco.largura, antebraco.altura, antebraco.cor);
     
     // Desenha a garra
-    glTranslatef(0.0f, 0.0f, antebraco.comprimento/2 + garra.comprimento/2);
+    glTranslatef(0.0f, 0.0f, antebraco.comprimento/2);
     desenharGarra();
     
     glPopMatrix();
@@ -192,11 +192,11 @@ void display() {
     glLoadIdentity();
     
     // Configura a visão da cena
-    gluLookAt(5.0f * sin(anguloVisao * M_PI / 180.0f), 
-              3.0f, 
-              5.0f * cos(anguloVisao * M_PI / 180.0f),
-              0.0f, 0.0f, 0.0f,
-              0.0f, 1.0f, 0.0f);
+    gluLookAt(7.0f * sin(anguloVisao * M_PI / 180.0f), 
+          4.0f, 
+          7.0f * cos(anguloVisao * M_PI / 180.0f),
+          0.0f, 0.0f, 0.0f,
+          0.0f, 1.0f, 0.0f);
     
     // Desenha o braço robótico
     desenharBracoRobotico();
