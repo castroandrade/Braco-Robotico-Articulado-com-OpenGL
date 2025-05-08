@@ -1,10 +1,11 @@
 //Dupla
 //José Henrique Castro Andrade
-//Priscila Araújo
+//Priscila de Araújo Andrade
 
 #include <GL/glut.h>
 #include <stdio.h>
 #include <math.h>
+
 
 typedef struct {
     float comprimento;
@@ -31,9 +32,7 @@ float posX = 0.0f, posY = 0.0f;
 float anguloVisao = 45.0f;
 
 // Inicializa os parâmetros do braço robótico
-// Inicializa os parâmetros do braço robótico
 void inicializarBraco() {
-    // Base - Azul profundo
     // Base 
     base.comprimento = 2.0f;
     base.largura = 2.0f;
@@ -43,7 +42,6 @@ void inicializarBraco() {
     base.anguloZ = 0.0f;
     base.cor[0] = 0.1f; base.cor[1] = 0.2f; base.cor[2] = 0.4f;
 
-    // Braço - Azul médio
     // Braço 
     braco.comprimento = 3.0f;
     braco.largura = 0.8f;
@@ -53,7 +51,6 @@ void inicializarBraco() {
     braco.anguloZ = 0.0f;
     braco.cor[0] = 0.2f; braco.cor[1] = 0.3f; braco.cor[2] = 0.6f;
 
-    // Antebraço - Azul claro
     // Antebraço 
     antebraco.comprimento = 2.5f;
     antebraco.largura = 0.6f;
@@ -63,7 +60,6 @@ void inicializarBraco() {
     antebraco.anguloZ = 0.0f;
     antebraco.cor[0] = 0.3f; antebraco.cor[1] = 0.5f; antebraco.cor[2] = 0.8f;
 
-    // Garra - Dourado/amarelo para contraste
     // Garra 
     garra.comprimento = 0.5f;
     garra.largura = 0.4f;
@@ -179,7 +175,6 @@ void desenharBracoRobotico() {
     glPopMatrix();
 }
 
-// Função para exibir instruções na tela - VERSÃO MELHORADA
 // Função para exibir instruções na tela 
 void exibirInstrucoes() {
     glMatrixMode(GL_PROJECTION);
