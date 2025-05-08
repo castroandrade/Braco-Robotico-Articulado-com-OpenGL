@@ -403,7 +403,7 @@ void reshape(int w, int h) {
 // Função para tratar eventos do teclado
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-        // Seleção de segmentos (agora apenas 1 e 2)
+        // Seleção de segmentos
         case '1': segmentoAtual = 1; break;  // Braço
         case '2': segmentoAtual = 2; break;  // Antebraço
 
@@ -443,7 +443,7 @@ void keyboard(unsigned char key, int x, int y) {
             else if (segmentoAtual == 2) antebraco.anguloZ += 5.0f;
             break;
 
-        // Abertura da garra (sempre ativa, não precisa selecionar)
+        // Abertura da garra
         case 'y': garra.abertura = fmin(garra.abertura + 5.0f, 90.0f); break;
         case 'u': garra.abertura = fmax(garra.abertura - 5.0f, 0.0f); break;
 
