@@ -75,97 +75,106 @@ void desenharCubo(float comprimento, float largura, float altura, float cor[3]) 
     glColor3fv(cor);
 
     glBegin(GL_QUADS);
-        // Face frontal
-        glVertex3f(-largura/2, -altura/2, comprimento/2);
-        glVertex3f(largura/2, -altura/2, comprimento/2);
-        glVertex3f(largura/2, altura/2, comprimento/2);
-        glVertex3f(-largura/2, altura/2, comprimento/2);
+        // Face frontal (z = comprimento)
+        glVertex3f(-largura/2, -altura/2, comprimento);
+        glVertex3f(largura/2, -altura/2, comprimento);
+        glVertex3f(largura/2, altura/2, comprimento);
+        glVertex3f(-largura/2, altura/2, comprimento);
 
-        // Face traseira
-        glVertex3f(-largura/2, -altura/2, -comprimento/2);
-        glVertex3f(largura/2, -altura/2, -comprimento/2);
-        glVertex3f(largura/2, altura/2, -comprimento/2);
-        glVertex3f(-largura/2, altura/2, -comprimento/2);
+        // Face traseira (z = 0)
+        glVertex3f(-largura/2, -altura/2, 0.0f);
+        glVertex3f(largura/2, -altura/2, 0.0f);
+        glVertex3f(largura/2, altura/2, 0.0f);
+        glVertex3f(-largura/2, altura/2, 0.0f);
 
-        // Face superior
-        glVertex3f(-largura/2, altura/2, -comprimento/2);
-        glVertex3f(largura/2, altura/2, -comprimento/2);
-        glVertex3f(largura/2, altura/2, comprimento/2);
-        glVertex3f(-largura/2, altura/2, comprimento/2);
+        // Faces laterais
+        glVertex3f(largura/2, -altura/2, 0.0f);
+        glVertex3f(largura/2, -altura/2, comprimento);
+        glVertex3f(largura/2, altura/2, comprimento);
+        glVertex3f(largura/2, altura/2, 0.0f);
 
-        // Face inferior
-        glVertex3f(-largura/2, -altura/2, -comprimento/2);
-        glVertex3f(largura/2, -altura/2, -comprimento/2);
-        glVertex3f(largura/2, -altura/2, comprimento/2);
-        glVertex3f(-largura/2, -altura/2, comprimento/2);
+        glVertex3f(-largura/2, -altura/2, 0.0f);
+        glVertex3f(-largura/2, -altura/2, comprimento);
+        glVertex3f(-largura/2, altura/2, comprimento);
+        glVertex3f(-largura/2, altura/2, 0.0f);
 
-        // Face lateral esquerda
-        glVertex3f(-largura/2, -altura/2, -comprimento/2);
-        glVertex3f(-largura/2, altura/2, -comprimento/2);
-        glVertex3f(-largura/2, altura/2, comprimento/2);
-        glVertex3f(-largura/2, -altura/2, comprimento/2);
+        // Faces superior e inferior
+        glVertex3f(-largura/2, altura/2, 0.0f);
+        glVertex3f(largura/2, altura/2, 0.0f);
+        glVertex3f(largura/2, altura/2, comprimento);
+        glVertex3f(-largura/2, altura/2, comprimento);
 
-        // Face lateral direita
-        glVertex3f(largura/2, -altura/2, -comprimento/2);
-        glVertex3f(largura/2, altura/2, -comprimento/2);
-        glVertex3f(largura/2, altura/2, comprimento/2);
-        glVertex3f(largura/2, -altura/2, comprimento/2);
+        glVertex3f(-largura/2, -altura/2, 0.0f);
+        glVertex3f(largura/2, -altura/2, 0.0f);
+        glVertex3f(largura/2, -altura/2, comprimento);
+        glVertex3f(-largura/2, -altura/2, comprimento);
     glEnd();
 }
 
 // Função para desenhar a garra
 void desenharGarra() {
-    // Desenha a parte fixa da garra
+    // Parte fixa da garra
     glPushMatrix();
-    glTranslatef(0.0f, 0.0f, garra.comprimento/2);
     desenharCubo(garra.comprimento, garra.largura, garra.largura/3, garra.cor);
-    glPopMatrix();
-
-    // Desenha os dois dedos da garra
+    
+    // Dedo direito
     glPushMatrix();
     glTranslatef(garra.largura/2, 0.0f, garra.comprimento);
     glRotatef(garra.abertura, 0.0f, 1.0f, 0.0f);
-    desenharCubo(garra.comprimento, garra.largura/3, garra.largura/2, garra.cor);
+    desenharCubo(garra.comprimento/2, garra.largura/3, garra.largura/2, garra.cor);
     glPopMatrix();
-
+    
+    // Dedo esquerdo
     glPushMatrix();
     glTranslatef(-garra.largura/2, 0.0f, garra.comprimento);
     glRotatef(-garra.abertura, 0.0f, 1.0f, 0.0f);
-    desenharCubo(garra.comprimento, garra.largura/3, garra.largura/2, garra.cor);
+    desenharCubo(garra.comprimento/2, garra.largura/3, garra.largura/2, garra.cor);
+    glPopMatrix();
+    
     glPopMatrix();
 }
-
 // Função para desenhar todo o braço robótico
 void desenharBracoRobotico() {
     glPushMatrix();
-
+    
     // Move a base para a posição atual
     glTranslatef(posX, posY, 0.0f);
-
-    // Desenha a base
+    
+    // Desenha a base (centro na origem)
     glPushMatrix();
+    glTranslatef(0.0f, base.altura/2, 0.0f);
     desenharCubo(base.comprimento, base.largura, base.altura, base.cor);
     glPopMatrix();
-
-    // Rotaciona e desenha o braço
+    
+    // Braço - rotação na parte superior da base
     glPushMatrix();
-    glTranslatef(0.0f, base.altura/2 + braco.altura/2, 0.0f);
+    // Posiciona no topo da base
+    glTranslatef(0.0f, base.altura, 0.0f);
+    
+    // Aplica rotações no ponto de junção (parte inferior do braço)
     glRotatef(braco.anguloX, 1.0f, 0.0f, 0.0f);
     glRotatef(braco.anguloY, 0.0f, 1.0f, 0.0f);
     glRotatef(braco.anguloZ, 0.0f, 0.0f, 1.0f);
+    
+    // Desenha o braço (extensão ao longo do eixo Z)
     desenharCubo(braco.comprimento, braco.largura, braco.altura, braco.cor);
-
-    // Rotaciona e desenha o antebraço
-    glTranslatef(0.0f, 0.0f, braco.comprimento/2 + antebraco.comprimento/2);
+    
+    // Antebraço - rotação na extremidade do braço
+    // Move para a extremidade do braço
+    glTranslatef(0.0f, 0.0f, braco.comprimento);
+    
+    // Aplica rotações no ponto de junção
     glRotatef(antebraco.anguloX, 1.0f, 0.0f, 0.0f);
     glRotatef(antebraco.anguloY, 0.0f, 1.0f, 0.0f);
     glRotatef(antebraco.anguloZ, 0.0f, 0.0f, 1.0f);
+    
+    // Desenha o antebraço
     desenharCubo(antebraco.comprimento, antebraco.largura, antebraco.altura, antebraco.cor);
-
-    // Desenha a garra
-    glTranslatef(0.0f, 0.0f, antebraco.comprimento/2);
+    
+    // Garra - posiciona na extremidade do antebraço
+    glTranslatef(0.0f, 0.0f, antebraco.comprimento);
     desenharGarra();
-
+    
     glPopMatrix();
     glPopMatrix();
 }
