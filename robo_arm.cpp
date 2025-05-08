@@ -32,40 +32,39 @@ float anguloVisao = 45.0f;
 
 // Inicializa os parâmetros do braço robótico
 void inicializarBraco() {
-    // Base
+    // Base 
     base.comprimento = 2.0f;
     base.largura = 2.0f;
     base.altura = 0.5f;
     base.anguloX = 0.0f;
     base.anguloY = 0.0f;
     base.anguloZ = 0.0f;
-    base.cor[0] = 0.5f; base.cor[1] = 0.5f; base.cor[2] = 0.5f;
+    base.cor[0] = 0.1f; base.cor[1] = 0.2f; base.cor[2] = 0.4f;
     
-    // Braço
+    // Braço 
     braco.comprimento = 3.0f;
     braco.largura = 0.8f;
     braco.altura = 0.8f;
     braco.anguloX = 0.0f;
     braco.anguloY = 0.0f;
     braco.anguloZ = 0.0f;
-    braco.cor[0] = 0.8f; braco.cor[1] = 0.2f; braco.cor[2] = 0.2f;
+    braco.cor[0] = 0.2f; braco.cor[1] = 0.3f; braco.cor[2] = 0.6f;
     
-    // Antebraço
+    // Antebraço 
     antebraco.comprimento = 2.5f;
     antebraco.largura = 0.6f;
     antebraco.altura = 0.6f;
     antebraco.anguloX = 0.0f;
     antebraco.anguloY = 0.0f;
     antebraco.anguloZ = 0.0f;
-    antebraco.cor[0] = 0.2f; antebraco.cor[1] = 0.2f; antebraco.cor[2] = 0.8f;
+    antebraco.cor[0] = 0.3f; antebraco.cor[1] = 0.5f; antebraco.cor[2] = 0.8f;
     
-    // Garra
+    // Garra 
     garra.comprimento = 0.5f;
     garra.largura = 0.4f;
     garra.abertura = 45.0f;
-    garra.cor[0] = 0.9f; garra.cor[1] = 0.9f; garra.cor[2] = 0.0f;
+    garra.cor[0] = 0.9f; garra.cor[1] = 0.7f; garra.cor[2] = 0.2f;
 }
-
 // Função para desenhar um cubo (usada para os segmentos)
 void desenharCubo(float comprimento, float largura, float altura, float cor[3]) {
     glColor3fv(cor);
@@ -166,7 +165,7 @@ void desenharBracoRobotico() {
     glPopMatrix();
 }
 
-// Função para exibir instruções na tela - VERSÃO MELHORADA
+// Função para exibir instruções na tela 
 void exibirInstrucoes() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -183,7 +182,7 @@ void exibirInstrucoes() {
     float y = glutGet(GLUT_WINDOW_HEIGHT) - 20;
     float alturaDeLinha = 18;
     
-    glColor3f(1.0f, 1.0f, 0.7f);
+    glColor3f(0.2f, 0.5f, 1.0f); 
     
     // Título
     glRasterPos2f(20, y);
