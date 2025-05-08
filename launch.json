@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Executar robo_arm",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/robo_arm.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "Compilar robo_arm",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}

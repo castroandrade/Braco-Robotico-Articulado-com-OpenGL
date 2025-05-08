@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar robo_arm",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "robo_arm.cpp",
+                "-o", "robo_arm.exe",
+                "-I", "./include",
+                "-L", "./lib/x64",
+                "-lfreeglut",
+                "-lglu32",
+                "-lopengl32"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}
