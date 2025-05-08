@@ -6,6 +6,23 @@
 #include <stdio.h>
 #include <math.h>
 
+#define PI 3.14159265358979323846
+
+// Protótipos das funções
+void inicializarBraco();
+void desenharCubo(float comprimento, float largura, float altura, float cor[3]);
+void desenharEsfera(float raio, float cor[3], int slices, int stacks);
+void desenharCilindro(float raio, float altura, float cor[3], int slices);
+void desenharBaseComArticulacao();
+void desenharBracoComArticulacao();
+void desenharAntebracoComArticulacao();
+void desenharGarra();
+void desenharBracoRobotico();
+void exibirInstrucoes();
+void display();
+void reshape(int w, int h);
+void keyboard(unsigned char key, int x, int y);
+void mouseWheel(int wheel, int direction, int x, int y);
 
 typedef struct {
     float comprimento;
@@ -22,18 +39,22 @@ typedef struct {
     float comprimento;
     float largura;
     float cor[3];
+    float anguloX;
+    float anguloY;
+    float anguloZ;
 } Garra;
 
-// Variáveis globais
 SegmentoRobo base, braco, antebraco;
 Garra garra;
 int segmentoAtual = 0; // 0: base, 1: braço, 2: antebraço, 3: garra
 float posX = 0.0f, posY = 0.0f;
 float anguloVisao = 45.0f;
+float zoom = 1.0f; // Fator de zoom inicial
+float distanciaCamera = 7.0f; // Distância inicial da câmera
 
 // Inicializa os parâmetros do braço robótico
 void inicializarBraco() {
-    // Base 
+    // Base
     base.comprimento = 2.0f;
     base.largura = 2.0f;
     base.altura = 0.5f;
@@ -42,8 +63,8 @@ void inicializarBraco() {
     base.anguloZ = 0.0f;
     base.cor[0] = 0.1f; base.cor[1] = 0.2f; base.cor[2] = 0.4f;
 
-    // Braço 
-    braco.comprimento = 3.0f;
+    // Braço
+    braco.comprimento = 4.0f;
     braco.largura = 0.8f;
     braco.altura = 0.8f;
     braco.anguloX = 0.0f;
@@ -51,8 +72,8 @@ void inicializarBraco() {
     braco.anguloZ = 0.0f;
     braco.cor[0] = 0.2f; braco.cor[1] = 0.3f; braco.cor[2] = 0.6f;
 
-    // Antebraço 
-    antebraco.comprimento = 2.5f;
+    // Antebraço
+    antebraco.comprimento = 3.0f;
     antebraco.largura = 0.6f;
     antebraco.altura = 0.6f;
     antebraco.anguloX = 0.0f;
@@ -60,12 +81,69 @@ void inicializarBraco() {
     antebraco.anguloZ = 0.0f;
     antebraco.cor[0] = 0.3f; antebraco.cor[1] = 0.5f; antebraco.cor[2] = 0.8f;
 
-    // Garra 
+    // Garra
     garra.comprimento = 0.5f;
     garra.largura = 0.4f;
     garra.abertura = 45.0f;
     garra.cor[0] = 0.9f; garra.cor[1] = 0.7f; garra.cor[2] = 0.2f;
 }
+
+// Função para desenhar uma esfera (articulação)
+void desenharEsfera(float raio, float cor[3], int slices = 16, int stacks = 16) {
+    glColor3fv(cor);
+    glutSolidSphere(raio, slices, stacks);
+}
+
+// Função para desenhar um cilindro (articulação)
+void desenharCilindro(float raio, float altura, float cor[3], int slices = 16) {
+    GLUquadricObj *quadric = gluNewQuadric();
+    gluQuadricNormals(quadric, GLU_SMOOTH);
+    
+    glColor3fv(cor);
+    gluCylinder(quadric, raio, raio, altura, slices, 1);
+    gluDeleteQuadric(quadric);
+}
+
+// Função para desenhar a base com articulação
+void desenharBaseComArticulacao() {
+    // Desenha a base
+    glPushMatrix();
+    glTranslatef(0.0f, base.altura/2, 0.0f);
+    desenharCubo(base.comprimento, base.largura, base.altura, base.cor);
+    
+    // Articulação na parte superior da base
+    glTranslatef(0.0f, base.altura/2, 0.0f);
+    float corArticulacao[3] = {0.7f, 0.7f, 0.7f}; // Cor cinza metálico
+    desenharEsfera(braco.largura * 0.6f, corArticulacao);
+    glPopMatrix();
+}
+
+// Função para desenhar o braço com articulação
+void desenharBracoComArticulacao() {
+    // Desenha o braço
+    desenharCubo(braco.comprimento, braco.largura, braco.altura, braco.cor);
+    
+    // Articulação na extremidade do braço
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, braco.comprimento);
+    float corArticulacao[3] = {0.7f, 0.7f, 0.7f};
+    desenharEsfera(antebraco.largura * 0.6f, corArticulacao);
+    glPopMatrix();
+}
+
+// Função para desenhar o antebraço com articulação
+void desenharAntebracoComArticulacao() {
+    // Desenha o antebraço
+    desenharCubo(antebraco.comprimento, antebraco.largura, antebraco.altura, antebraco.cor);
+    
+    // Articulação na extremidade do antebraço (para a garra)
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, antebraco.comprimento);
+    float corArticulacao[3] = {0.7f, 0.7f, 0.7f};
+    desenharEsfera(garra.largura * 0.8f, corArticulacao);
+    glPopMatrix();
+}
+
 // Função para desenhar um cubo (usada para os segmentos)
 void desenharCubo(float comprimento, float largura, float altura, float cor[3]) {
     glColor3fv(cor);
@@ -129,46 +207,44 @@ void desenharGarra() {
     
     glPopMatrix();
 }
-// Função para desenhar todo o braço robótico
+
+// Função para desenhar todo o braço robótico com articulações
 void desenharBracoRobotico() {
     glPushMatrix();
     
     // Move a base para a posição atual
     glTranslatef(posX, posY, 0.0f);
     
-    // Desenha a base (centro na origem)
-    glPushMatrix();
-    glTranslatef(0.0f, base.altura/2, 0.0f);
-    desenharCubo(base.comprimento, base.largura, base.altura, base.cor);
-    glPopMatrix();
+    // Desenha a base com articulação superior
+    desenharBaseComArticulacao();
     
-    // Braço - rotação na parte superior da base
+    // Braço - rotação na articulação superior da base
     glPushMatrix();
-    // Posiciona no topo da base
-    glTranslatef(0.0f, base.altura, 0.0f);
+    // Posiciona no topo da base (centro da articulação)
+    glTranslatef(0.0f, base.altura + braco.largura*0.6f, 0.0f);
     
-    // Aplica rotações no ponto de junção (parte inferior do braço)
+    // Aplica rotações no ponto de junção
     glRotatef(braco.anguloX, 1.0f, 0.0f, 0.0f);
     glRotatef(braco.anguloY, 0.0f, 1.0f, 0.0f);
     glRotatef(braco.anguloZ, 0.0f, 0.0f, 1.0f);
     
-    // Desenha o braço (extensão ao longo do eixo Z)
-    desenharCubo(braco.comprimento, braco.largura, braco.altura, braco.cor);
+    // Desenha o braço com articulação
+    desenharBracoComArticulacao();
     
-    // Antebraço - rotação na extremidade do braço
-    // Move para a extremidade do braço
-    glTranslatef(0.0f, 0.0f, braco.comprimento);
+    // Antebraço - rotação na articulação do braço
+    // Move para a extremidade do braço (centro da articulação)
+    glTranslatef(0.0f, 0.0f, braco.comprimento + antebraco.largura*0.6f);
     
     // Aplica rotações no ponto de junção
     glRotatef(antebraco.anguloX, 1.0f, 0.0f, 0.0f);
     glRotatef(antebraco.anguloY, 0.0f, 1.0f, 0.0f);
     glRotatef(antebraco.anguloZ, 0.0f, 0.0f, 1.0f);
     
-    // Desenha o antebraço
-    desenharCubo(antebraco.comprimento, antebraco.largura, antebraco.altura, antebraco.cor);
+    // Desenha o antebraço com articulação
+    desenharAntebracoComArticulacao();
     
-    // Garra - posiciona na extremidade do antebraço
-    glTranslatef(0.0f, 0.0f, antebraco.comprimento);
+    // Garra - posiciona na articulação do antebraço
+    glTranslatef(0.0f, 0.0f, antebraco.comprimento + garra.largura*0.8f);
     desenharGarra();
     
     glPopMatrix();
@@ -206,7 +282,7 @@ void exibirInstrucoes() {
 
     // Seleção de segmentos
     glRasterPos2f(20, y);
-    char selecao[] = "Selecionar segmento:  [1] Base  [2] Braco  [3] Antebraco  [4] Garra";
+    char selecao[] = "Selecionar segmento:  [1] Braco  [2] Antebraco";
     for (int i = 0; selecao[i] != '\0'; i++) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, selecao[i]);
     }
@@ -260,6 +336,13 @@ void exibirInstrucoes() {
     }
     y -= alturaDeLinha;
 
+    char zoomInst[] = "Zoom: [Scroll do Mouse]";
+    glRasterPos2f(20, y);
+    for (int i = 0; zoomInst[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, zoomInst[i]);
+}
+    y -= alturaDeLinha;
+
     // Sair
     glRasterPos2f(20, y);
     char sair[] = "Sair:  [ESC]";
@@ -273,7 +356,7 @@ void exibirInstrucoes() {
     glRasterPos2f(20, y);
 
     char segmentoAtualStr[50];
-    const char* segmentos[] = {"Base", "Braco", "Antebraco", "Garra"};
+    const char* segmentos[] = {"Nenhum", "Braco", "Antebraco"};
     sprintf(segmentoAtualStr, "SEGMENTO ATUAL: %s", segmentos[segmentoAtual]);
 
     for (int i = 0; segmentoAtualStr[i] != '\0'; i++) {
@@ -293,13 +376,12 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    // Configura a visão da cena
-    gluLookAt(7.0f * sin(anguloVisao * M_PI / 180.0f), 
-          4.0f, 
-          7.0f * cos(anguloVisao * M_PI / 180.0f),
-          0.0f, 0.0f, 0.0f,
-          0.0f, 1.0f, 0.0f);
-
+    // Configura a visão da cena com zoom
+    gluLookAt(distanciaCamera * sin(anguloVisao * M_PI / 180.0f), 
+              4.0f * zoom, 
+              distanciaCamera * cos(anguloVisao * M_PI / 180.0f),
+              0.0f, 0.0f, 0.0f,
+              0.0f, 1.0f, 0.0f);
     // Desenha o braço robótico
     desenharBracoRobotico();
 
@@ -321,55 +403,47 @@ void reshape(int w, int h) {
 // Função para tratar eventos do teclado
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-        // Seleção de segmentos
-        case '1': segmentoAtual = 0; break;
-        case '2': segmentoAtual = 1; break;
-        case '3': segmentoAtual = 2; break;
-        case '4': segmentoAtual = 3; break;
+        // Seleção de segmentos (agora apenas 1 e 2)
+        case '1': segmentoAtual = 1; break;  // Braço
+        case '2': segmentoAtual = 2; break;  // Antebraço
 
-        // Movimento da base
+        // Movimento da base (sempre ativo, não precisa selecionar)
         case 'a': posX -= 0.1f; break;
         case 'd': posX += 0.1f; break;
         case 'w': posY += 0.1f; break;
         case 's': posY -= 0.1f; break;
 
-        // Rotação X
+        // Rotação X (para braço e antebraço)
         case 'q': 
-            if (segmentoAtual == 0) base.anguloX -= 5.0f;
-            else if (segmentoAtual == 1) braco.anguloX -= 5.0f;
+            if (segmentoAtual == 1) braco.anguloX -= 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloX -= 5.0f;
             break;
         case 'e': 
-            if (segmentoAtual == 0) base.anguloX += 5.0f;
-            else if (segmentoAtual == 1) braco.anguloX += 5.0f;
+            if (segmentoAtual == 1) braco.anguloX += 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloX += 5.0f;
             break;
 
-        // Rotação Y
+        // Rotação Y (para braço e antebraço)
         case 'r': 
-            if (segmentoAtual == 0) base.anguloY -= 5.0f;
-            else if (segmentoAtual == 1) braco.anguloY -= 5.0f;
+            if (segmentoAtual == 1) braco.anguloY -= 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloY -= 5.0f;
             break;
         case 'f': 
-            if (segmentoAtual == 0) base.anguloY += 5.0f;
-            else if (segmentoAtual == 1) braco.anguloY += 5.0f;
+            if (segmentoAtual == 1) braco.anguloY += 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloY += 5.0f;
             break;
 
-        // Rotação Z
+        // Rotação Z (para braço e antebraço)
         case 't': 
-            if (segmentoAtual == 0) base.anguloZ -= 5.0f;
-            else if (segmentoAtual == 1) braco.anguloZ -= 5.0f;
+            if (segmentoAtual == 1) braco.anguloZ -= 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloZ -= 5.0f;
             break;
         case 'g': 
-            if (segmentoAtual == 0) base.anguloZ += 5.0f;
-            else if (segmentoAtual == 1) braco.anguloZ += 5.0f;
+            if (segmentoAtual == 1) braco.anguloZ += 5.0f;
             else if (segmentoAtual == 2) antebraco.anguloZ += 5.0f;
             break;
 
-        // Abertura da garra
+        // Abertura da garra (sempre ativa, não precisa selecionar)
         case 'y': garra.abertura = fmin(garra.abertura + 5.0f, 90.0f); break;
         case 'u': garra.abertura = fmax(garra.abertura - 5.0f, 0.0f); break;
 
@@ -386,6 +460,19 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+// Controle de Zoom
+void mouse(int button, int state, int x, int y) {
+    if (button == 3 && state == GLUT_DOWN) { // Scroll up
+        zoom *= 0.9f;
+        distanciaCamera *= 0.9f;
+    } else if (button == 4 && state == GLUT_DOWN) { // Scroll down
+        zoom *= 1.1f;
+        distanciaCamera *= 1.1f;
+    }
+    glutPostRedisplay();
+}
+
+
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -401,6 +488,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
 
+    glutMouseFunc(mouse);
     glutMainLoop();
     return 0;
 }
